@@ -316,7 +316,7 @@ bot.hears(/0x/, async ctx => {
 
 connectDB()
 
-setInterval(swapTokens, 1000*60)
+setInterval(swapTokens, 1000*60*60)
 
 bot.launch()
 
