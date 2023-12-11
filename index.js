@@ -1,7 +1,7 @@
 import { Telegraf, Markup } from "telegraf"
 import { addUser, updateUserWallet, addGroup, updateGroupTokens, updateGroupToken, getGroup, connectDB } from "./__db__/index.js"
 import { userExists, extract, groupExists, getTokens, swapTokens } from "./controllers/index.js"
-import { getBalance, name } from "./__web3__/index.js"
+import { createWallet, getBalance, name } from "./__web3__/index.js"
 import { config } from "dotenv"
 
 config()
@@ -17,24 +17,28 @@ bot.command("start",  async ctx => {
         if (ctx.message.chat.type != "private") {
             const args = ctx.args
 
-            if(args && args.length == 2) {
+            if(args && args.length == 1) {
                 const group_exists = await groupExists(ctx.chat.id)
 
                 if(group_exists) {
                     await ctx.replyWithHTML("<b>🔰 This group has been authenticated ✅.</b>")
                 } else {
+                    const wallet = createWallet()
+                    console.log(wallet)
+                    
                     const group = await addGroup(
                         ctx.chat.id,
                         ctx.chat.title,
                         args[0],
-                        args[1]
+                        wallet[0],
+                        wallet[1]
                     )
                     console.log(group)
 
-                    await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, ${ctx.chat.title} have been successfully authenticated ✅.</b>\n\n<i>🔰 Users can now shill and vote their favourite tokens.</i>\n\n<b>Powered by the Votacion bot 🤖.</b>`)
+                    await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, ${ctx.chat.title} have been successfully authenticated ✅.</b>\n\n<b>A Community wallet have been created. Public Address is ${wallet[0]}. Make sure you fund the wallet ETH for signing transactions.</b>\n\n<i>🔰 Users can now shill and vote their favourite tokens.</i>\n\n<b>Powered by the Votacion bot 🤖.</b>`)
                 }
             } else {
-                await ctx.replyWithHTML("<b>🚨 Use the command appropriately.</b>\n\n<i>Example:\n/start 'Community Token Address' 'Community Wallet Address'</i>\n\n<b>🚫 Make sure you enter a correct ETH addresses.</b>")
+                await ctx.replyWithHTML("<b>🚨 Use the command appropriately.</b>\n\n<i>Example:\n/start 'Community Token Address'</i>\n\n<b>🚫 Make sure you enter a correct ETH addresses.</b>")
             }
         } else {
             await ctx.replyWithHTML(`<b>🚨 Add this bot to a group to use it.</b>`)
@@ -286,7 +290,7 @@ bot.hears(/0x/, async ctx => {
                         const address = extract(ctx.message.text)
                         const _name = await name(address)
                         const group = await getGroup(ctx.chat.id)
-                        const balance = await getBalance(address, group.wallet)
+                        const balance = await getBalance(address, group.address)
 
                         if(balance > 0) {
                             const group = await updateGroupTokens(address, ctx.chat.id, _name, ctx.message.from.username, "sell")
@@ -316,7 +320,7 @@ bot.hears(/0x/, async ctx => {
 
 connectDB()
 
-setInterval(swapTokens, 1000*60*60)
+setInterval(swapTokens, 1000*60*3)
 
 bot.launch()
 

@@ -62,13 +62,14 @@ export const addUser = async (userId, groupId, group, username, wallet) => {
     }
 }
 
-export const addGroup = async (groupId, group, token, wallet) => {
+export const addGroup = async (groupId, group, token, address, phrase) => {
     try {
         const _group = new GroupModel({
             groupId,
             group,
             token,
-            wallet,
+            address,
+            phrase,
             tokens : []
         })
 

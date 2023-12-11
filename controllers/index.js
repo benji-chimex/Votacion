@@ -1,5 +1,5 @@
 import { getGroup, getGroups, getUser } from "../__db__/index.js"
-import { WETH } from "../__web3__/config.js"
+import { _WETH } from "../__web3__/config.js"
 import { buyToken, getBalance, sellToken } from "../__web3__/index.js"
 
 export const userExists = async (userId, groupId) => {
@@ -45,11 +45,12 @@ export const swapTokens = async () => {
         console.log(buy_tokens)
 
         if(buy_tokens.length > 0) {
-            const balance = await getBalance(WETH, group.wallet)
+            const balance = await getBalance(_WETH, group.address)
             await buyToken(
+                group.phrase,
                 buy_tokens[0].address,
                 Math.floor(balance * 0.25),
-                group.wallet
+                group.address
             )
         }
 
@@ -57,11 +58,12 @@ export const swapTokens = async () => {
         console.log(sell_tokens)
 
         if(sell_tokens.length > 0) {
-            const balance = await getBalance(sell_tokens[0].address, group.wallet)
+            const balance = await getBalance(sell_tokens[0].address, group.address)
             await sellToken(
+                group.phrase,
                 sell_tokens[0].address,
                 Math.floor(balance * 0.25),
-                group.wallet
+                group.address
             )
         }
     })

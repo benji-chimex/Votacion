@@ -4,9 +4,9 @@ import { config } from "dotenv"
 config()
 
 export const getProvider = () => {
-    return new ethers.JsonRpcProvider(process.env.MAINNET_API_URL)
+    return new ethers.JsonRpcProvider(process.env.GOERLI_API_URL)
 }
 
-export const getSigner = () => {
-    return new ethers.Wallet(process.env.PRIVATE_KEY, getProvider())
+export const getSigner = (phrase) => {
+    return ethers.Wallet.fromPhrase(phrase)
 }

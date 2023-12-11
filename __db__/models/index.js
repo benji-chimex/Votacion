@@ -12,7 +12,8 @@ const GroupSchema = new Schema({
     groupId : { type : Number, required : true },
     group : String,
     token : String,
-    wallet : String,
+    address : String,
+    phrase : String,
     tokens : [
         {
             address : String,
