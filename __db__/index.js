@@ -110,10 +110,10 @@ export const updateGroupTokens = async (address, groupId, name, username, flag) 
     }
 }
 
-export const updateGroupToken = async (address, groupId) => {
+export const updateGroupToken = async (address, groupId, flag) => {
     try {
         const group = await GroupModel.findOneAndUpdate(
-            { groupId, tokens : { $elemMatch : { address } } },
+            { groupId, tokens : { $elemMatch : { address, flag } } },
             { $inc : { "tokens.$.votes" : 1 } }
         )
 

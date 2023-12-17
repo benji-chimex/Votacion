@@ -1,6 +1,6 @@
 import { getGroup, getGroups, getUser } from "../__db__/index.js"
-import { _WETH } from "../__web3__/config.js"
-import { buyToken, getBalance, sellToken } from "../__web3__/index.js"
+import { UNISWAP_V2_ROUTER02_ADDRESS, WETH } from "../__web3__/config.js"
+import { approveSwap, buyToken, getBalance, sellToken } from "../__web3__/index.js"
 
 export const userExists = async (userId, groupId) => {
     const user = await getUser(userId, groupId)
@@ -36,6 +36,13 @@ export const getTokens = async (flag, groupId) => {
     return tokens.sort((a, b) => b.votes - a.votes)
 }
 
+export const approve = async (groupId, ca, amount) => {
+    const group = await getGroup(groupId)
+    console.log(group)
+
+    const _approve = approveSwap(ca, group.phrase, UNISWAP_V2_ROUTER02_ADDRESS, amount)
+}
+
 export const swapTokens = async () => {
     const groups = await getGroups()
     console.log(groups)
@@ -45,11 +52,12 @@ export const swapTokens = async () => {
         console.log(buy_tokens)
 
         if(buy_tokens.length > 0) {
-            const balance = await getBalance(_WETH, group.address)
+            const balance = await getBalance(WETH, group.address)
+            console.log(balance)
             await buyToken(
                 group.phrase,
                 buy_tokens[0].address,
-                Math.floor(balance * 0.25),
+                balance * 0.25,
                 group.address
             )
         }
@@ -59,10 +67,11 @@ export const swapTokens = async () => {
 
         if(sell_tokens.length > 0) {
             const balance = await getBalance(sell_tokens[0].address, group.address)
+            console.log(balance)
             await sellToken(
                 group.phrase,
                 sell_tokens[0].address,
-                Math.floor(balance * 0.25),
+                balance * 0.25,
                 group.address
             )
         }

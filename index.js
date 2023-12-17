@@ -1,6 +1,6 @@
 import { Telegraf, Markup } from "telegraf"
 import { addUser, updateUserWallet, addGroup, updateGroupTokens, updateGroupToken, getGroup, connectDB } from "./__db__/index.js"
-import { userExists, extract, groupExists, getTokens, swapTokens } from "./controllers/index.js"
+import { userExists, extract, groupExists, getTokens, swapTokens, approve } from "./controllers/index.js"
 import { createWallet, getBalance, name } from "./__web3__/index.js"
 import { config } from "dotenv"
 
@@ -74,14 +74,19 @@ bot.command("wallet",  async ctx => {
                     const group = await getGroup(ctx.chat.id)
                     const balance = await getBalance(group.token, args[0])
 
-                    if(balance > 0) {
-                        const user = await updateUserWallet(ctx.message.from.id, ctx.chat.id, args[0])
-                        console.log(user)
+                    const user = await updateUserWallet(ctx.message.from.id, ctx.chat.id, args[0])
+                    console.log(user)
 
-                        await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, You have been successfully authenticated ✅. You can shill and vote tokens to be bought by the ${ctx.chat.title} Community Wallet.</b>`)
-                    } else {
-                        await ctx.replyWithHTML("<b>🚨 Authentication failed. You do not have sufficent balance of the Community token.</b>")   
-                    }
+                    await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, You have been successfully authenticated ✅. You can shill and vote tokens to be bought by the ${ctx.chat.title} Community Wallet.</b>`)
+
+                    // if(balance > 0) {
+                    //     const user = await updateUserWallet(ctx.message.from.id, ctx.chat.id, args[0])
+                    //     console.log(user)
+
+                    //     await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, You have been successfully authenticated ✅. You can shill and vote tokens to be bought by the ${ctx.chat.title} Community Wallet.</b>`)
+                    // } else {
+                    //     await ctx.replyWithHTML("<b>🚨 Authentication failed. You do not have sufficent balance of the Community token.</b>")   
+                    // }
                 } else {
                     await ctx.replyWithHTML("<b>🚨 Use the command appropriately.</b>\n\n<i>Example:\n/wallet 'Your Wallet Address'</i>\n\n<b>🚫 Make sure you enter a correct ETH address.</b>")
                 }
@@ -214,7 +219,7 @@ bot.command("buy_vote",  async ctx => {
                     const args = ctx.args
 
                     if(args && args.length == 1) {
-                        const token = await updateGroupToken(args[0], ctx.chat.id)
+                        const token = await updateGroupToken(args[0], ctx.chat.id, "buy")
                         console.log(token)
 
                         await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, You have successfully voted for ${await name(args[0])} to be bought in the next hour ✅.</b>`)
@@ -248,7 +253,7 @@ bot.command("sell_vote",  async ctx => {
                     const args = ctx.args
 
                     if(args && args.length == 1) { 
-                        const token = await updateGroupToken(args[0], ctx.chat.id)
+                        const token = await updateGroupToken(args[0], ctx.chat.id, "sell")
                         console.log(token)
 
                         await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, You have successfully voted for ${await name(args[0])} to be sold in the next hour ✅.</b>`)
@@ -293,6 +298,11 @@ bot.hears(/0x/, async ctx => {
                         const balance = await getBalance(address, group.address)
 
                         if(balance > 0) {
+                            const approve = approve(
+                                ctx.chat.id,
+                                address,
+                                balance
+                            )
                             const group = await updateGroupTokens(address, ctx.chat.id, _name, ctx.message.from.username, "sell")
                             console.log(group, address)
 
@@ -320,7 +330,7 @@ bot.hears(/0x/, async ctx => {
 
 connectDB()
 
-setInterval(swapTokens, 1000*60*3)
+setInterval(swapTokens, 1000*60)
 
 bot.launch()
 
