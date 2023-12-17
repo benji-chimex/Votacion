@@ -79,14 +79,14 @@ bot.command("wallet",  async ctx => {
 
                     await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, You have been successfully authenticated ✅. You can shill and vote tokens to be bought by the ${ctx.chat.title} Community Wallet.</b>`)
 
-                    // if(balance > 0) {
-                    //     const user = await updateUserWallet(ctx.message.from.id, ctx.chat.id, args[0])
-                    //     console.log(user)
+                    if(balance > 0) {
+                        const user = await updateUserWallet(ctx.message.from.id, ctx.chat.id, args[0])
+                        console.log(user)
 
-                    //     await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, You have been successfully authenticated ✅. You can shill and vote tokens to be bought by the ${ctx.chat.title} Community Wallet.</b>`)
-                    // } else {
-                    //     await ctx.replyWithHTML("<b>🚨 Authentication failed. You do not have sufficent balance of the Community token.</b>")   
-                    // }
+                        await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, You have been successfully authenticated ✅. You can shill and vote tokens to be bought by the ${ctx.chat.title} Community Wallet.</b>`)
+                    } else {
+                        await ctx.replyWithHTML("<b>🚨 Authentication failed. You do not have sufficent balance of the Community token.</b>")   
+                    }
                 } else {
                     await ctx.replyWithHTML("<b>🚨 Use the command appropriately.</b>\n\n<i>Example:\n/wallet 'Your Wallet Address'</i>\n\n<b>🚫 Make sure you enter a correct ETH address.</b>")
                 }
