@@ -328,12 +328,12 @@ bot.hears(/0x/, async ctx => {
     }
 })
 
-connectDB()
+try {
+    connectDB()
 
-setInterval(swapTokens, 1000*60*60)
+    setInterval(swapTokens, 1000*60*60)
 
-bot.launch()
-
-process.once("SIGINT", () => bot.stop("SIGINT"))
-
-process.once("SIGTERM", () => bot.stop("SIGTERM"))
+    bot.launch()
+} catch (err) {
+    console.log(err)
+}
