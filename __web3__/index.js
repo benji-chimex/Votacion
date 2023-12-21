@@ -33,11 +33,15 @@ export const approveSwap = async (ca, phrase, spender, amount) => {
     )
     console.log(await token.totalSupply(), await token.decimals())
 
-    const approve = await token.approve(
-        spender,
-        ethers.parseEther(`${amount}`)
-    )
-    console.log(approve)
+    try {
+        const approve = await token.approve(
+            spender,
+            ethers.parseEther(`${amount}`)
+        )
+        console.log(approve)
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 export const name = async (address) => {
@@ -62,19 +66,23 @@ export const buyToken = async (phrase, address, amount, to) => {
     const time = block.timestamp + 10000
     console.log(await router.WETH(), time, block.timestamp, amount, address, to)
 
-    const swap = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(
-        ethers.parseEther("0"),
-        [await router.WETH(), address],
-        to,
-        time,
-        { 
-            value : ethers.parseEther(`${amount}`)
-        }
-    )
-    console.log(swap)
+    try {
+        const swap = await router.swapExactETHForTokensSupportingFeeOnTransferTokens(
+            ethers.parseEther("0"),
+            [await router.WETH(), address],
+            to,
+            time,
+            { 
+                value : ethers.parseEther(`${amount}`)
+            }
+        )
+        console.log(swap)
+    } catch (err) {
+        console.log(err)
+    }
 }
 
-export const sellToken = async (phrase, address, amount, to, amountToSwap) => {
+export const sellToken = async (phrase, address, amount, to) => {
     const router = new ethers.Contract(
         UNISWAP_V2_ROUTER02_ADDRESS,
         UNISWAP_V2_ROUTER02_ABI,
@@ -84,12 +92,16 @@ export const sellToken = async (phrase, address, amount, to, amountToSwap) => {
     const time = block.timestamp + 10000
     console.log(await router.WETH(), time, block.timestamp, amount, address, to)
 
-    const swap = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(
-        ethers.parseEther(`${amount}`),
-        ethers.parseEther("0"),
-        [address, await router.WETH()],
-        to,
-        time
-    )
-    console.log(swap)
+    try {
+        const swap = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(
+            ethers.parseEther(`${amount}`),
+            ethers.parseEther("0"),
+            [address, await router.WETH()],
+            to,
+            time
+        )
+        console.log(swap)
+    } catch (err) {
+        console.log(err)
+    }
 }

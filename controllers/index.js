@@ -54,12 +54,15 @@ export const swapTokens = async () => {
         if(buy_tokens.length > 0) {
             const balance = await getBalance(WETH, group.address)
             console.log(balance)
-            await buyToken(
-                group.phrase,
-                buy_tokens[0].address,
-                balance * 0.25,
-                group.address
-            )
+
+            if(balance > 0) {
+                await buyToken(
+                    group.phrase,
+                    buy_tokens[0].address,
+                    balance * 0.25,
+                    group.address
+                )
+            }
         }
 
         const sell_tokens = await getTokens("sell", group.groupId)
@@ -68,12 +71,15 @@ export const swapTokens = async () => {
         if(sell_tokens.length > 0) {
             const balance = await getBalance(sell_tokens[0].address, group.address)
             console.log(balance)
-            await sellToken(
-                group.phrase,
-                sell_tokens[0].address,
-                balance * 0.25,
-                group.address
-            )
+
+            if(balance > 0) {
+                await sellToken(
+                    group.phrase,
+                    sell_tokens[0].address,
+                    balance * 0.25,
+                    group.address
+                )
+            }
         }
     })
 }

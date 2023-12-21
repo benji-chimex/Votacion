@@ -35,7 +35,7 @@ bot.command("start",  async ctx => {
                     )
                     console.log(group)
 
-                    await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, ${ctx.chat.title} have been successfully authenticated ✅.</b>\n\n<b>A Community wallet have been created. Public Address is ${wallet[0]}. Make sure you fund the wallet ETH for signing transactions.</b>\n\n<i>🔰 Users can now shill and vote their favourite tokens.</i>\n\n<b>Powered by the Votacion bot 🤖.</b>`)
+                    await ctx.replyWithHTML(`<b>Congratulations ${ctx.message.from.username} 🎉, ${ctx.chat.title} has been successfully authenticated ✅.</b>\n\n<b>A Community wallet has been created. Public Address is ${wallet[0]}.</b>\n\n<b>🚨 Make sure you fund the wallet ETH for signing transactions.</b>\n\n<i>🔰 Users can now shill and vote their favourite tokens.</i>\n\n<b>Powered by the Unison bot 🤖.</b>`)
                 }
             } else {
                 await ctx.replyWithHTML("<b>🚨 Use the command appropriately.</b>\n\n<i>Example:\n/start 'Community Token Address'</i>\n\n<b>🚫 Make sure you enter a correct ETH addresses.</b>")
